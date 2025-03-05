@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@import "@radix-ui/themes/styles.css";
 @theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
