@@ -1,30 +1,10 @@
-import { Status } from "@prisma/client";
+import React from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import CreateIssueBtn from "../componets/CreateIssueBtn";
-import Badge from "../componets/Badge";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-interface Issue {
-  id: number;
-  title: string;
-  status: Status;
-  createdAt: string;
-}
-
-export default async function Issues() {
-  await delay(2000);
-
-  let issues: Issue[] = [];
-
-  try {
-    const res = await fetch("http://localhost:3000/api/issues");
-    issues = await res.json();
-  } catch (error) {
-    console.log(error);
-  }
-
-  await delay(2000);
-
+const LoadingIssues = () => {
+  const issues = [1, 2, 3, 4, 5];
   return (
     <div className="p-5">
       <CreateIssueBtn />
@@ -41,14 +21,20 @@ export default async function Issues() {
           </thead>
           <tbody className="bg-slate-50">
             {issues.length > 0 ? (
-              issues.map((issue, index) => (
-                <tr key={issue.id}>
-                  <td>{index + 1}</td>
-                  <td>{issue.title}</td>
+              issues.map((issue) => (
+                <tr key={issue}>
                   <td>
-                    <Badge status={issue.status} />
+                    <Skeleton />
                   </td>
-                  <td>{new Date(issue.createdAt).toDateString()}</td>
+                  <td>
+                    <Skeleton />
+                  </td>
+                  <td>
+                    <Skeleton />
+                  </td>
+                  <td>
+                    <Skeleton />
+                  </td>
                 </tr>
               ))
             ) : (
@@ -63,4 +49,6 @@ export default async function Issues() {
       </div>
     </div>
   );
-}
+};
+
+export default LoadingIssues;

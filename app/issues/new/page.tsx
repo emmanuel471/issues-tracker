@@ -1,5 +1,5 @@
 "use client";
-import { TextField, Button, Text } from "@radix-ui/themes";
+import { TextField, Button } from "@radix-ui/themes";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import dynamic from "next/dynamic";
@@ -9,6 +9,8 @@ import ActionAlert from "@/app/componets/ActionAlert";
 import { zodResolver } from "@hookform/resolvers/zod";
 import createIssuesSchema from "@/prisma/createIssuesSchema";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import ErrorMessage from "@/app/componets/ErrorMessage";
 
 type IssueForm = z.infer<typeof createIssuesSchema>;
 
@@ -17,6 +19,8 @@ const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
 });
 
 const CreateNewIssue = () => {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const {
     register,
     control,
@@ -26,6 +30,22 @@ const CreateNewIssue = () => {
     resolver: zodResolver(createIssuesSchema),
   });
   const [error, setError] = React.useState<string | null>(null);
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setIsSubmitting(true);
+      await axios.post("/api/issues", data);
+      setIsSubmitting(false);
+      router.push("/issues");
+    } catch (error) {
+      setIsSubmitting(false);
+      console.log("Error ", error);
+      if (error instanceof Error) {
+        setError(error.toString());
+      } else {
+        setError("An unknown error occurred");
+      }
+    }
+  });
 
   return (
     <div className="max-w-2xl">
@@ -39,27 +59,9 @@ const CreateNewIssue = () => {
           />
         </div>
       )}
-      <form
-        className="space-y-2 p-5"
-        onSubmit={handleSubmit(async (data) => {
-          try {
-            await axios.post("/api/issues", data);
-          } catch (error) {
-            console.log("Error ", error);
-            if (error instanceof Error) {
-              setError(error.toString());
-            } else {
-              setError("An unknown error occurred");
-            }
-          }
-        })}
-      >
+      <form className="space-y-2 p-5" onSubmit={onSubmit}>
         <TextField.Root placeholder="Title" {...register("title")} />
-        {errors.title && (
-          <Text as="p" color="red">
-            {errors.title.message}
-          </Text>
-        )}
+        <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
         <Controller
           name="description"
@@ -68,13 +70,14 @@ const CreateNewIssue = () => {
             <SimpleMDE placeholder="Description" {...field} />
           )}
         />
-        {errors.description && (
-          <Text as="p" color="red">
-            {errors.description.message}
-          </Text>
-        )}
+        <ErrorMessage>{errors.title?.message}</ErrorMessage>
 
-        <Button type="submit">Submit</Button>
+        <Button disabled={isSubmitting} type="submit">
+          Submit New Issue{" "}
+          {isSubmitting && (
+            <span className="loading loading-spinner loading-md"></span>
+          )}
+        </Button>
       </form>
     </div>
   );
