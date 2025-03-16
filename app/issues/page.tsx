@@ -1,8 +1,7 @@
 import { Status } from "@prisma/client";
 import CreateIssueBtn from "../componets/CreateIssueBtn";
 import Badge from "../componets/Badge";
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import Link from "next/link";
 
 interface Issue {
   id: number;
@@ -12,8 +11,6 @@ interface Issue {
 }
 
 export default async function Issues() {
-  await delay(2000);
-
   let issues: Issue[] = [];
 
   try {
@@ -22,8 +19,6 @@ export default async function Issues() {
   } catch (error) {
     console.log(error);
   }
-
-  await delay(2000);
 
   return (
     <div className="p-5">
@@ -44,7 +39,15 @@ export default async function Issues() {
               issues.map((issue, index) => (
                 <tr key={issue.id}>
                   <td>{index + 1}</td>
-                  <td>{issue.title}</td>
+                  <td>
+                    <Link
+                      href={`/issues/${issue.id}`}
+                      className="text-blue-500 hover:text-blue-700 underline cursor-pointer"
+                    >
+                      {issue.title}
+                    </Link>
+                  </td>
+
                   <td>
                     <Badge status={issue.status} />
                   </td>
