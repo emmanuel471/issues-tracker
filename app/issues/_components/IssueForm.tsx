@@ -12,6 +12,7 @@ import { z } from "zod";
 import ErrorMessage from "@/app/componets/ErrorMessage";
 import { useRouter } from "next/navigation";
 import { Issue } from "@prisma/client";
+import { API_ENDPOINTS } from "@/route-config";
 
 type IssueFormData = z.infer<typeof createIssuesSchema>;
 
@@ -39,13 +40,14 @@ const IssueForm = ({ existingIssue }: Props) => {
     try {
       setIsSubmitting(true);
       if (existingIssue) {
-        await axios.patch(`/api/issues/${existingIssue.id}`, data);
+        await axios.patch(API_ENDPOINTS.issue_by_id(existingIssue.id), data);
       } else {
-        await axios.post("/api/issues", data);
+        await axios.post(API_ENDPOINTS.issues, data);
       }
 
       setIsSubmitting(false);
       router.push("/issues");
+      router.refresh();
     } catch (error) {
       setIsSubmitting(false);
       console.log("Error ", error);
@@ -95,7 +97,12 @@ const IssueForm = ({ existingIssue }: Props) => {
             )}
           </Button>
         ) : (
-          <Button>Submit changes</Button>
+          <Button disabled={isSubmitting} type="submit">
+            Submit changes
+            {isSubmitting && (
+              <span className="loading loading-spinner loading-md"></span>
+            )}
+          </Button>
         )}
       </form>
     </div>

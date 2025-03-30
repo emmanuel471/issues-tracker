@@ -2,6 +2,7 @@ import { Status } from "@prisma/client";
 import CreateIssueBtn from "../componets/CreateIssueBtn";
 import Badge from "../componets/Badge";
 import Link from "next/link";
+import { API_ENDPOINTS } from "@/route-config";
 
 interface Issue {
   id: number;
@@ -14,7 +15,7 @@ export default async function Issues() {
   let issues: Issue[] = [];
 
   try {
-    const res = await fetch("http://localhost:3000/api/issues");
+    const res = await fetch(API_ENDPOINTS.issues);
     issues = await res.json();
   } catch (error) {
     console.log(error);
@@ -67,3 +68,5 @@ export default async function Issues() {
     </div>
   );
 }
+
+export const dynamic = "force-dynamic";

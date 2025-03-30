@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "./NavBar";
 import { Theme } from "@radix-ui/themes";
+import AuthProvider from "./auth/AuthProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,12 +20,14 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`}>
-        <Theme accentColor="cyan" panelBackground="solid" scaling="110%">
-          <NavBar />
-          <main>{children}</main>
-        </Theme>
-      </body>
+      <AuthProvider>
+        <body className={`${inter.variable} antialiased`}>
+          <Theme accentColor="cyan" panelBackground="solid" scaling="110%">
+            <NavBar />
+            <main>{children}</main>
+          </Theme>
+        </body>
+      </AuthProvider>
     </html>
   );
 }
