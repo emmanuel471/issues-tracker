@@ -1,11 +1,18 @@
 import { prisma } from "@/prisma/migrations/client";
 import createIssuesSchema from "@/prisma/createIssuesSchema";
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import authOptions from "@/app/auth/authOptions";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ response: "Unauthorized " }, { status: 401 });
+  }
   const { id } = await params;
   const body = await request.json();
   const validation = createIssuesSchema.safeParse(body);
@@ -40,8 +47,13 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ response: "Unauthorized " }, { status: 401 });
+  }
   const { id } = await params;
 
   const issue = await prisma.issue.findUnique({
@@ -70,7 +82,7 @@ export async function DELETE(
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
   try {

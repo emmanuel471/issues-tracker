@@ -4,9 +4,8 @@ import { notFound } from "next/navigation";
 import IssueForm from "../../_components/IssueForm";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
-
 const EditIssue = async ({ params }: Props) => {
   const { id } = await params;
   const existingIssue = await prisma.issue.findUnique({
