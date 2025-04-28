@@ -4,6 +4,7 @@ import "./globals.css";
 import NavBar from "./NavBar";
 import { Theme } from "@radix-ui/themes";
 import AuthProvider from "./auth/AuthProvider";
+import QueryClientProvider from "./api/QueryClientProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -22,10 +23,12 @@ export default function RootLayout({
     <html lang="en">
       <AuthProvider>
         <body className={`${inter.variable} antialiased`}>
-          <Theme accentColor="cyan" panelBackground="solid" scaling="110%">
-            <NavBar />
-            <main>{children}</main>
-          </Theme>
+          <QueryClientProvider>
+            <Theme accentColor="cyan" panelBackground="solid" scaling="110%">
+              <NavBar />
+              <main>{children}</main>
+            </Theme>
+          </QueryClientProvider>
         </body>
       </AuthProvider>
     </html>

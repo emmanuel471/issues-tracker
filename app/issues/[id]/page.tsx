@@ -2,9 +2,9 @@
 
 import { Box, Button, Blockquote, Flex, Grid, Heading } from "@radix-ui/themes";
 import { notFound, useRouter } from "next/navigation";
-import EditIssueButton from "./EditIssueButton";
-import IssueDetails from "./IssueDetails";
-import AlertDialogue from "./AlertDialogue";
+import EditIssueButton from "../_components/EditIssueButton";
+import IssueDetails from "../_components/IssueDetails";
+import AlertDialogue from "../_components/AlertDialogue";
 import React, { useEffect, useState } from "react";
 import { Issue } from "@prisma/client";
 import axios from "axios";
@@ -12,6 +12,7 @@ import { MdDeleteForever } from "react-icons/md";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { API_ENDPOINTS } from "@/route-config";
+import IssueSelector from "../_components/IssueSelector";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -102,9 +103,10 @@ const IssueDetailsPage = ({ params }: Props) => {
       <Box>
         <Flex
           direction={{ initial: "row", md: "column" }}
-          maxWidth="80px"
+          maxWidth="100px"
           gap="1"
         >
+          <IssueSelector />
           <EditIssueButton issueId={issue.id} />
           <AlertDialogue
             trigger={
